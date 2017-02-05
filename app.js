@@ -182,6 +182,9 @@ Player.onConnect = function(socket,username){
 		player:Player.getAllInitPack(),
 		bullet:Bullet.getAllInitPack(),
 	})
+	for(var i in SOCKET_LIST){
+			SOCKET_LIST[i].emit('addToChat','Player '+player.username+' connected.');
+		}
 }
 Player.getAllInitPack = function(){
 	var players = [];
@@ -193,6 +196,9 @@ Player.getAllInitPack = function(){
 Player.onDisconnect = function(socket){
 	delete Player.list[socket.id];
 	removePack.player.push(socket.id);
+	for(var i in SOCKET_LIST){
+			SOCKET_LIST[i].emit('addToChat','Player '+player.username+' disconnected.');
+		}
 }
 Player.update = function(){
 	var pack = [];
