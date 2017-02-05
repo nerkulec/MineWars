@@ -253,7 +253,7 @@
 		var player = Player.list[selfId];
 		var x = WIDTH/2 - player.x;
 		var y = HEIGHT/2 - player.y;
-		ctx.drawImage(Img.map[player.map],x,y,WIDTH,HEIGHT);
+		ctx.drawImage(Img.map[player.map],0,0,WIDTH,HEIGHT,x,y,WIDTH,HEIGHT);
 	}
 	
 	var drawScore = function(){
@@ -295,8 +295,8 @@
 		socket.emit('keyPress',{inputId:'attack',state:false});
 	}
 	document.onmousemove = function(event){
-		var x = -960 + event.clientX - 8;
-		var y = -360 + event.clientY - 8;
+		var x = -WIDTH/2 + event.clientX - 8;
+		var y = -HEIGHT/2 + event.clientY - 8;
 		var angle = Math.atan2(y,x) / Math.PI * 180;
 		socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
 	}
