@@ -6,11 +6,11 @@
 </div>
 
 <div id="gameDiv" style="display:none;">
-	<div id="game" style="position:absolute;width:1920px;height:720px">
-		<canvas id="ctx" width="1920" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
-		<canvas id="ctx-ui" width="1920" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
+	<div id="game" style="position:absolute;width:1080px;height:720px">
+		<canvas id="ctx" width="1080" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
+		<canvas id="ctx-ui" width="1080" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
 		
-		<div id="ui" style="position:absolute;width:1920px;height:720px;">
+		<div id="ui" style="position:absolute;width:1080px;height:720px;">
 			<button onclick="changeMap()" style="position:absolute;bottom:0px;left:0px">
 				Change Map
 			</button>
@@ -25,7 +25,7 @@
 		</div>
 
 		<form id="chat-form">
-			<input id="chat-input" type="text" style="width:1920px"></input>
+			<input id="chat-input" type="text" style="width:1080px"></input>
 		</form>
 	</div>
 </div>
@@ -34,7 +34,7 @@
 <script src="/client/socket.js"></script>
 <script>
 	// 
-	var WIDTH = 1920;
+	var WIDTH = 1080;
 	var HEIGHT = 720;
 	var socket = io();
 	
