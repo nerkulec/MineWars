@@ -22,8 +22,8 @@
             socket.emit('keyPress',{inputId:'left',state:true});
         else if(event.keyCode === 87) // w
             socket.emit('keyPress',{inputId:'up',state:true});
-           
     }
+	
     document.onkeyup = function(event){
         if(event.keyCode === 68)    //d
             socket.emit('keyPress',{inputId:'right',state:false});
