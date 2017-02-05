@@ -194,11 +194,11 @@ Player.getAllInitPack = function(){
 }
 
 Player.onDisconnect = function(socket){
-	delete Player.list[socket.id];
-	removePack.player.push(socket.id);
 	for(var i in SOCKET_LIST){
 			SOCKET_LIST[i].emit('addToChat','Player '+player.username+' disconnected.');
 		}
+	delete Player.list[socket.id];
+	removePack.player.push(socket.id);
 }
 Player.update = function(){
 	var pack = [];
