@@ -253,7 +253,7 @@
 		var player = Player.list[selfId];
 		var x = WIDTH/2 - player.x;
 		var y = HEIGHT/2 - player.y;
-		ctx.drawImage(Img.map[player.map],x,y);
+		ctx.drawImage(Img.map[player.map],x,y,WIDTH,HEIGHT);
 	}
 	
 	var drawScore = function(){
