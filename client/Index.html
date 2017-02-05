@@ -10,7 +10,7 @@
 		<canvas id="ctx" width="1920" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
 		<canvas id="ctx-ui" width="1920" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
 		
-		<div id="ui" style="position:absolute;width:500px;height:500px;">
+		<div id="ui" style="position:absolute;width:1920px;height:720px;">
 			<button onclick="changeMap()" style="position:absolute;bottom:0px;left:0px">
 				Change Map
 			</button>
@@ -253,7 +253,7 @@
 		var player = Player.list[selfId];
 		var x = WIDTH/2 - player.x;
 		var y = HEIGHT/2 - player.y;
-		ctx.drawImage(Img.map[player.map],x,y);
+		ctx.drawImage(Img.map[player.map],x,y,WIDTH,HEIGHT,0,0,WIDTH,HEIGHT);
 	}
 	
 	var drawScore = function(){
