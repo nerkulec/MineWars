@@ -1,31 +1,29 @@
+<!--
 <div id="signDiv">
 	Username: <input id="signDiv-username" type="text"></input><br>
 	Password: <input id="signDiv-password" type="password"></input>
 	<button id="signDiv-signIn">Sign In</button>
 	<button id="signDiv-signUp">Sign Up</button>
 </div>
-
-<div id="gameDiv" style="display:none;">
-	<div id="game" style="position:absolute;width:1080px;height:720px">
-		<canvas id="ctx" width="1080" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
-		<canvas id="ctx-ui" width="1080" height="720" style="position:absolute;border:1px solid #000000;"></canvas>
+-->
+<div id="gameDiv" style="display:inline-block" >
+	<div id="game" style="position:absolute;width:1900px;height:900px">
+		<canvas id="ctx" width="1900" height="900" style="position:absolute;border:1px solid #000000;"></canvas>
+		<canvas id="ctx-ui" width="1900" height="900" style="position:absolute;border:1px solid #000000;"></canvas>
 		
-		<div id="ui" style="position:absolute;width:1080px;height:720px;">
-			<button onclick="changeMap()" style="position:absolute;bottom:0px;left:0px">
-				Change Map
-			</button>
+		<div id="ui" style="position:absolute;width:1440px;height:900px;">
 		
 		</div>
 		
 	</div>
 	
-	<div id="belowGame" style="margin-top:740px">	
-		<div id="chat-text" style="width:1920px;height:100px;overflow-y:scroll">
+	<div id="belowGame" style="margin-top:910px">	
+		<div id="chat-text" style="width:1900px;height:100px;overflow-y:scroll">
 			<div>Hello!</div>
 		</div>
 
 		<form id="chat-form">
-			<input id="chat-input" type="text" style="width:1080px"></input>
+			<input id="chat-input" type="text" style="width:1900px"></input>
 		</form>
 	</div>
 </div>
@@ -34,8 +32,8 @@
 <script src="/client/socket.js"></script>
 <script>
 	// 
-	var WIDTH = 1080;
-	var HEIGHT = 720;
+	var WIDTH = 1900;
+	var HEIGHT = 900;
 	var socket = io();
 	
 	//sign
@@ -45,25 +43,8 @@
 	var signDivSignUp = document.getElementById('signDiv-signUp');
 	var signDivPassword = document.getElementById('signDiv-password');
 	
-	signDivSignIn.onclick = function(){
-		socket.emit('signIn',{username:signDivUsername.value,password:signDivPassword.value});
-	}
-	signDivSignUp.onclick = function(){
-		socket.emit('signUp',{username:signDivUsername.value,password:signDivPassword.value});
-	}
-	socket.on('signInResponse',function(data){
-		if(data.success){
-			signDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block';
-		} else
-			alert("Sign in unsuccessul.");
-	});
-	socket.on('signUpResponse',function(data){
-		if(data.success){
-			alert("Sign up successul.");
-		} else
-			alert("Sign up unsuccessul.");
-	});
+
+	socket.emit('signIn',{username:'xD',password:'xDD'});
 
 	//chat
 	var chatText = document.getElementById('chat-text');
@@ -94,10 +75,7 @@
 	}
 	
 	//UI
-	var changeMap = function(){
-		socket.emit('changeMap');
-	}
-	
+
 	
 	
 	//game
@@ -107,11 +85,8 @@
 	Img.bullet = new Image();
 	Img.bullet.src = '/client/img/bullet.png';
 	
-	Img.map = {};
-	Img.map['field'] = new Image();
-	Img.map['field'].src = '/client/img/map.png';
-	Img.map['forest'] = new Image();
-	Img.map['forest'].src = '/client/img/map2.png';
+	Img.bg = new Image();
+	Img.bg.src = '/client/img/bg.jpg';
 	
 	var ctx = document.getElementById("ctx").getContext("2d");
 	var ctxUi = document.getElementById("ctx-ui").getContext("2d");
@@ -126,11 +101,8 @@
 		self.hp = initPack.hp;
 		self.hpMax = initPack.hpMax;
 		self.score = initPack.score;
-		self.map = initPack.map;
 		
 		self.draw = function(){	
-			if(Player.list[selfId].map !== self.map)
-				return;
 			var x = self.x - Player.list[selfId].x + WIDTH/2;
 			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			
@@ -162,11 +134,8 @@
 		self.id = initPack.id;
 		self.x = initPack.x;
 		self.y = initPack.y;
-		self.map = initPack.map;
 		
 		self.draw = function(){
-			if(Player.list[selfId].map !== self.map)
-				return;
 			var width = Img.bullet.width/2;
 			var height = Img.bullet.height/2;
 			
@@ -211,8 +180,6 @@
 					p.hp = pack.hp;
 				if(pack.score !== undefined)
 					p.score = pack.score;
-				if(pack.map !== undefined)
-					p.map = pack.map;
 			}
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){
@@ -241,7 +208,7 @@
 		if(!selfId)
 			return;
 		ctx.clearRect(0,0,WIDTH,HEIGHT);
-		drawMap();
+		drawBg();
 		drawScore();
 		for(var i in Player.list)
 			Player.list[i].draw();
@@ -249,11 +216,11 @@
 			Bullet.list[i].draw();
 	},40);
 	
-	var drawMap = function(){
+	var drawBg = function(){
 		var player = Player.list[selfId];
 		var x = WIDTH/2 - player.x;
 		var y = HEIGHT/2 - player.y;
-		ctx.drawImage(Img.map[player.map],0,0,WIDTH,HEIGHT,x,y,WIDTH,HEIGHT);
+		ctx.drawImage(Img.bg,0,0,1130,1130,x,y,WIDTH*3,HEIGHT*3);
 	}
 	
 	var drawScore = function(){

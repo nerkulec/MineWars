@@ -15,22 +15,22 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
+var WIDTH = 1440;
+var HEIGHT = 1080;
+
 var Entity = function(param){
 	var self = {
-		x:250,
-		y:250,
+		x:0,
+		y:0,
 		spdX:0,
 		spdY:0,
 		id:"",
-		map:'forest',
 	}
 	if(param){
 		if(param.x)
 			self.x = param.x;
 		if(param.y)
 			self.y = param.y;
-		if(param.map)
-			self.map = param.map;
 		if(param.id)
 			self.id = param.id;		
 	}
@@ -66,9 +66,7 @@ var Player = function(param){
 	var super_update = self.update;
 	self.update = function(){
 		self.updateSpd();
-		
 		super_update();
-		
 		if(self.pressingAttack){
 			self.shootBullet(self.mouseAngle);
 		}
@@ -79,7 +77,6 @@ var Player = function(param){
 			angle:angle,
 			x:self.x,
 			y:self.y,
-			map:self.map,
 		});
 	}
 	
@@ -108,7 +105,6 @@ var Player = function(param){
 			hp:self.hp,
 			hpMax:self.hpMax,
 			score:self.score,
-			map:self.map,
 		};		
 	}
 	self.getUpdatePack = function(){
@@ -118,7 +114,6 @@ var Player = function(param){
 			y:self.y,
 			hp:self.hp,
 			score:self.score,
-			map:self.map,
 		}	
 	}
 	
@@ -129,13 +124,9 @@ var Player = function(param){
 }
 Player.list = {};
 Player.onConnect = function(socket,username){
-	var map = 'forest';
-	if(Math.random() < 0.5)
-		map = 'field';
 	var player = Player({
 		username:username,
 		id:socket.id,
-		map:map,
 	});
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
@@ -152,12 +143,6 @@ Player.onConnect = function(socket,username){
 			player.mouseAngle = data.state;
 	});
 	
-	socket.on('changeMap',function(data){
-		if(player.map === 'field')
-			player.map = 'forest';
-		else
-			player.map = 'field';
-	});
 	
 	socket.on('sendMsgToServer',function(data){
 		for(var i in SOCKET_LIST){
@@ -229,7 +214,7 @@ var Bullet = function(param){
 		
 		for(var i in Player.list){
 			var p = Player.list[i];
-			if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id){
+			if(self.getDistance(p) < 32 && self.parent !== p.id){
 				p.hp -= 1;
 								
 				if(p.hp <= 0){
@@ -249,7 +234,6 @@ var Bullet = function(param){
 			id:self.id,
 			x:self.x,
 			y:self.y,
-			map:self.map,
 		};
 	}
 	self.getUpdatePack = function(){
