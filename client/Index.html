@@ -81,7 +81,7 @@
 	//game
 	var Img = {};
 	Img.player = new Image();
-	Img.player.src = '/client/img/player.png';
+	Img.player.src = '/client/img/stonuk.jpg';
 	Img.bullet = new Image();
 	Img.bullet.src = '/client/img/bullet.png';
 	
@@ -110,15 +110,14 @@
 			ctx.fillStyle = 'red';
 			ctx.fillRect(x - hpWidth/2,y - 40,hpWidth,4);
 			
-			var width = Img.player.width*2;
-			var height = Img.player.height*2;
+			var width = Img.player.width*2/20;
+			var height = Img.player.height*2/20;
 			
 			
 			ctx.drawImage(Img.player,
-				0,0,Img.player.width,Img.player.height,
+				0.2*Img.player.width,0.2*Img.player.height,0.5*Img.player.width,0.6*Img.player.height,
 				x-width/2,y-height/2,width,height);
 			
-			//ctx.fillText(self.score,self.x,self.y-60);
 		}
 		
 		Player.list[self.id] = self;
