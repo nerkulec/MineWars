@@ -15,8 +15,8 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
-var WIDTH = 1440*3;
-var HEIGHT = 1080*3;
+var WIDTH = 1900*3;
+var HEIGHT = 900*3;
 
 var Entity = function(param){
 	var self = {
