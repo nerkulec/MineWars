@@ -95,7 +95,7 @@
 	var Player = function(initPack){
 		var self = {};
 		self.id = initPack.id;
-		self.number = initPack.number;
+
 		self.x = initPack.x;
 		self.y = initPack.y;
 		self.hp = initPack.hp;
@@ -157,7 +157,6 @@
 	socket.on('init',function(data){	
 		if(data.selfId)
 			selfId = data.selfId;
-		//{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			new Player(data.player[i]);
 		}

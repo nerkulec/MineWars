@@ -39,7 +39,9 @@ var Entity = function(param){
 		self.updatePosition();
 	}
 	self.updatePosition = function(){
+		if((!(self.x<0&&self.spdX<0))&&(!(self.x>WIDTH&&self.spdX>0)))
 		self.x += self.spdX;
+		if((!(self.y<0&&self.spdY<0))&&(!(self.y>HEIGHT&&self.spdY>0)))
 		self.y += self.spdY;
 	}
 	self.getDistance = function(pt){
@@ -50,7 +52,6 @@ var Entity = function(param){
 
 var Player = function(param){
 	var self = Entity(param);
-	self.number = "" + Math.floor(10 * Math.random());
 	self.username = param.username;
 	self.pressingRight = false;
 	self.pressingLeft = false;
@@ -101,7 +102,6 @@ var Player = function(param){
 			id:self.id,
 			x:self.x,
 			y:self.y,	
-			number:self.number,	
 			hp:self.hp,
 			hpMax:self.hpMax,
 			score:self.score,
