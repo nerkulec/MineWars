@@ -151,6 +151,24 @@
 	}
 	Bullet.list = {};
 	
+	var Object= function(initPack){
+		var self = {};
+		self.id = initPack.id;
+		self.x = initPack.x;
+		self.y = initPack.y;
+		
+		self.draw = function(){
+			var x = self.x - Player.list[selfId].x + WIDTH/2;
+			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+		
+			ctx.fillRect(x-10,y-10,20,20);
+		}
+		
+		Object.list[self.id] = self;		
+		return self;
+	}
+	Object.list = {};
+	
 	var selfId = null;
 
 	socket.on('init',function(data){	
@@ -162,10 +180,12 @@
 		for(var i = 0 ; i < data.bullet.length; i++){
 			new Bullet(data.bullet[i]);
 		}
+		for(var i = 0 ; i < data.object.length; i++){
+			new Object(data.object[i]);
+		}
 	});
 	
 	socket.on('update',function(data){
-		//{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
 		for(var i = 0 ; i < data.player.length; i++){
 			var pack = data.player[i];
 			var p = Player.list[pack.id];
@@ -190,6 +210,16 @@
 					b.y = pack.y;
 			}
 		}
+		for(var i = 0 ; i < data.object.length; i++){
+			var pack = data.object[i];
+			var b = Object.list[data.object[i].id];
+			if(b){
+				if(pack.x !== undefined)
+					b.x = pack.x;
+				if(pack.y !== undefined)
+					b.y = pack.y;
+			}
+		}
 	});
 	
 	socket.on('remove',function(data){
@@ -199,6 +229,9 @@
 		}
 		for(var i = 0 ; i < data.bullet.length; i++){
 			delete Bullet.list[data.bullet[i]];
+		}
+		for(var i = 0 ; i < data.object.length; i++){
+			delete Object.list[data.object[i]];
 		}
 	});
 	
@@ -212,6 +245,8 @@
 			Player.list[i].draw();
 		for(var i in Bullet.list)
 			Bullet.list[i].draw();
+		for(var i in Object.list)
+			Object.list[i].draw();
 	},40);
 	
 	var drawBg = function(){

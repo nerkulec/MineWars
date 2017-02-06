@@ -24,7 +24,7 @@ var Entity = function(param){
 		y:0,
 		spdX:0,
 		spdY:0,
-		id:"",
+		id:Math.random(),
 	}
 	if(param){
 		if(param.x)
@@ -48,6 +48,53 @@ var Entity = function(param){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
 	}
 	return self;
+}
+
+var Object =  function(param){
+	var self = Entity(param);
+	
+	
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,	
+	};}
+	
+	self.getUpdatePack = function(){
+		return {
+			x:self.x,
+			y:self.y,
+		}	
+	}
+	
+	Object.list[self.id] = self;
+	
+	initPack.object.push(self.getInitPack());
+	
+	return self;
+}
+Object.list = {};
+
+Object.update = function(){
+	var pack = [];
+	for(var i in Object.list){
+		var object = Object.list[i];
+		object.update();
+		if(object.toRemove){
+			delete Object.list[i];
+			removePack.object.push(object.id);
+		} else
+			pack.push(object.getUpdatePack());		
+	}
+	return pack;
+}
+
+Object.getAllInitPack = function(){
+	var objects = [];
+	for(var i in Object.list)
+		objects.push(Object.list[i].getInitPack());
+	return objects;
 }
 
 var Player = function(param){
@@ -128,6 +175,10 @@ Player.onConnect = function(socket,username){
 		username:username,
 		id:socket.id,
 	});
+	var object = {};
+	for(var i = 0;i<10;i++)
+		object[i] = Object({x:i*50,y:i*25});
+	
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
 			player.pressingLeft = data.state;
@@ -166,6 +217,7 @@ Player.onConnect = function(socket,username){
 		selfId:socket.id,
 		player:Player.getAllInitPack(),
 		bullet:Bullet.getAllInitPack(),
+		object:Object.getAllInitPack()
 	})
 	for(var i in SOCKET_LIST){
 			SOCKET_LIST[i].emit('addToChat','Player '+player.username+' connected.');
@@ -222,8 +274,8 @@ var Bullet = function(param){
 					if(shooter)
 						shooter.score += 1;
 					p.hp = p.hpMax;
-					p.x = Math.random() * 500;
-					p.y = Math.random() * 500;					
+					p.x = 0;
+					p.y = 0;					
 				}
 				self.toRemove = true;
 			}
@@ -342,14 +394,15 @@ io.sockets.on('connection', function(socket){
 	
 });
 
-var initPack = {player:[],bullet:[]};
-var removePack = {player:[],bullet:[]};
+var initPack = {player:[],bullet:[],object:[]};
+var removePack = {player:[],bullet:[],object:[]};
 
 
 setInterval(function(){
 	var pack = {
 		player:Player.update(),
 		bullet:Bullet.update(),
+		object:Object.update(),
 	}
 	
 	for(var i in SOCKET_LIST){
@@ -360,8 +413,10 @@ setInterval(function(){
 	}
 	initPack.player = [];
 	initPack.bullet = [];
+	initPack.object = [];
 	removePack.player = [];
 	removePack.bullet = [];
+	removePack.object = [];
 	
 },1000/25);
 
@@ -382,10 +437,6 @@ var startProfiling = function(duration){
 }
 startProfiling(10000);
 */
-
-
-
-
 
 
 
