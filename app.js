@@ -199,7 +199,7 @@ Player.onConnect = function(socket,username){
 		if(recipientSocket === null){
 			socket.emit('addToChat','The player ' + data.username + ' is not online.');
 		} else {
-			recipientSocket.emit('addToChat','From ' + player.username + ':' + data.message);
+			recipientSocket.emit('addToChat','From ' + player.username + ':' + data.message); 
 			socket.emit('addToChat','To ' + data.username + ':' + data.message);
 		}
 	});
