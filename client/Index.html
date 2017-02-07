@@ -18,7 +18,7 @@
 	</div>
 	
 	<div id="belowGame" style="margin-top:800px">	
-		<div id="chat-text" style="width:1800px;height:900px;overflow-y:scroll">
+		<div id="chat-text" style="width:1800px;height:100px;overflow-y:scroll">
 			<div>Hello!</div>
 		</div>
 
@@ -94,20 +94,23 @@
 		var self = {};
 		self.x = pack.x;
 		self.y = pack.y;
-		self.speed = 10;
-		self.draw = function(){	
-			var x = self.x - camera.x + WIDTH/2;
-			var y = self.y - camera.y + HEIGHT/2;
-
-			var width = Img.camera.width*2/20;
-			var height = Img.camera.height*2/20;
-			
-			
-			ctx.drawImage(Img.camera,
-				0.2*Img.camera.width,0.2*Img.camera.height,0.5*Img.camera.width,0.6*Img.camera.height,
-				x-width/2,y-height/2,width,height);
-			
+		self.speed = 20;
+		self.pressingUp = false;
+		self.pressingDown = false;
+		self.pressingRight = false;
+		self.pressingLeft = false;
+		
+		self.update = function(){
+			if(self.pressingDown)
+				self.y+=self.speed;
+			if(self.pressingUp)
+				self.y-=self.speed;
+			if(self.pressingRight)
+				self.x+=self.speed;
+			if(self.pressingLeft)
+				self.x-=self.speed;
 		}
+		
 		
 		return self;
 	}
@@ -147,12 +150,12 @@
 	socket.on('update',function(data){
 		for(var i = 0 ; i < data.object.length; i++){
 			var pack = data.object[i];
-			var b = Object.list[data.object[i].id];
-			if(b){
+			var o = Object.list[pack.id];
+			if(o){
 				if(pack.x !== undefined)
-					b.x = pack.x;
+					o.x = pack.x;
 				if(pack.y !== undefined)
-					b.y = pack.y;
+					o.y = pack.y;
 			}
 		}
 	});
@@ -165,6 +168,7 @@
 	
 	setInterval(function(){
 		ctx.clearRect(0,0,WIDTH,HEIGHT);
+		camera.update();
 		drawBg();
 		for(var i in Object.list)
 			Object.list[i].draw();
@@ -177,25 +181,29 @@
 	}
 	
 	document.onkeydown = function(event){
-		if(event.keyCode === 68)	//up
-			camera.x+=camera.speed;
-		else if(event.keyCode === 83)	//down
-			camera.x-=camera.speed;
-		else if(event.keyCode === 65) //right
-			camera.x+=camera.speed;
-		else if(event.keyCode === 87) //left
-			camera.x-=camera.speed;
+		if(event.keyCode === 40){	//down
+			camera.pressingDown = true;
+			console.log('down');}
+		if(event.keyCode === 38){	//up
+			camera.pressingUp = true;
+			console.log('up');}
+		if(event.keyCode === 39){ //right
+			camera.pressingRight = true;
+			console.log('right');}
+		if(event.keyCode === 37){ //left
+			camera.pressingLeft = true;
+			console.log('left');}
 			
 	}
 	document.onkeyup = function(event){
-		if(event.keyCode === 68)	//d
-			socket.emit('keyPress',{inputId:'right',state:false});
-		else if(event.keyCode === 83)	//s
-			socket.emit('keyPress',{inputId:'down',state:false});
-		else if(event.keyCode === 65) //a
-			socket.emit('keyPress',{inputId:'left',state:false});
-		else if(event.keyCode === 87) // w
-			socket.emit('keyPress',{inputId:'up',state:false});
+		if(event.keyCode === 40)	//down
+			camera.pressingDown = false;
+		if(event.keyCode === 38)	//up
+			camera.pressingUp = false;
+		if(event.keyCode === 39) //right
+			camera.pressingRight = false;
+		if(event.keyCode === 37) //left
+			camera.pressingLeft = false;
 	}
 	
 	var selectX = null;
@@ -205,8 +213,26 @@
 		if(event.button===0){
 			selectX =event.clientX;
 			selectY =event.clientY;
+			
+		}else if(event.button===2){
+		var order = {
+			x:event.clientX-WIDTH/2+camera.x-8,
+			y:event.clientY-HEIGHT/2+camera.y-8,
+		};
+		var pack = {
+			objects:[],
+			order:order
+		};
+		for(var i in Object.list){
+			if(Object.list[i].selected){
+				pack.objects.push(i);
+			}
+		}
+			socket.emit('addOrders',pack);
+		pack.objects = [];
 		}
 	}
+	
 	document.onmouseup = function(event){
 		if(event.button===0){
 			var selectX2 =event.clientX;
@@ -214,7 +240,6 @@
 			
 			for(var i in Object.list){
 				Object.list[i].selected = false;
-			
 			}
 			
 			ctx.fillRect(selectX,selectY,selectX2-selectX,selectY2-selectY);

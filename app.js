@@ -22,10 +22,14 @@ var Entity = function(param){
 	var self = {
 		x:0,
 		y:0,
+		maxSpd:10,
 		spdX:0,
 		spdY:0,
 		id:Math.random(),
+		currentOrder:null
 	}
+	self.xDone = false;
+	self.yDone = false;
 	if(param){
 		if(param.x)
 			self.x = param.x;
@@ -36,8 +40,68 @@ var Entity = function(param){
 	}
 	
 	self.update = function(){
+		self.updateSpeed();
 		self.updatePosition();
 	}
+	self.addOrder = function(pack){ //TODO: ma dodawać order do kolejki orderow
+		self.currentOrder = pack;
+		//inne rzeczy ktore zrobi order
+	}
+	self.updateSpeed = function(){ //pack = {x:,y:,maxSpd:}
+		//kod ktory uruchomii sie nawet bez paczki
+		var pack = self.currentOrder;
+		var spd = null;
+		
+		if(!pack){
+			return;
+		}
+			console.log('Order' + ': ' + self.id);
+		//kod ktory uruchomii sie tylko jak jest paczka
+		
+		if (self.x!=pack.x && self.y!=pack.y)
+			spd=0.7*self.maxSpd; //dodać pack.maxSpd
+		else
+			spd=self.maxSpd;    
+
+		if (self.x!=pack.x)
+		{   
+    if(Math.abs(self.x-pack.x)<=spd){
+        self.x=pack.x; //nieladnie tutaj zrobione, kiedys trzeba bedzie poprawic
+		self.spdX = 0;
+		self.xDone = true;
+		console.log('Doskok x' + ': ' + self.id);
+    }else{
+		console.log('Przesuwanie x' + ': ' + self.id);
+        if(self.x<pack.x)
+            self.spdX=spd;
+        else
+            self.spdX=-spd;
+        }
+		}
+
+		if (self.y!=pack.y)
+		{   
+    if(Math.abs(self.y-pack.y)<=spd){
+        self.y=pack.y; //nieladnie tutaj zrobione, kiedys trzeba bedzie poprawic
+		self.spdY = 0;
+		self.yDone = true;
+		console.log('Doskok y' + ': ' + self.id);
+	}else{
+		console.log('Przesuwanie y' + ': ' + self.id);
+        if(self.y<pack.y)
+           self.spdY=spd;
+        else
+           self.spdY=-spd;
+	}
+		}
+			if(self.xDone&&self.yDone){
+				self.currentOrder = null;
+				console.log('Order: nulled');
+				self.xDone = false;
+				self.yDone = false;
+			}
+	}
+	
 	self.updatePosition = function(){
 		if((!(self.x<0&&self.spdX<0))&&(!(self.x>WIDTH&&self.spdX>0)))
 		self.x += self.spdX;
@@ -47,7 +111,8 @@ var Entity = function(param){
 	self.getDistance = function(pt){
 		return Math.sqrt(Math.pow(self.x-pt.x,2) + Math.pow(self.y-pt.y,2));
 	}
-	return self;
+
+return self;
 }
 
 var Object =  function(param){
@@ -60,9 +125,9 @@ var Object =  function(param){
 			x:self.x,
 			y:self.y,	
 	};}
-	
 	self.getUpdatePack = function(){
 		return {
+			id:self.id,
 			x:self.x,
 			y:self.y,
 		}	
@@ -136,6 +201,12 @@ Player.onConnect = function(socket,username){
 		} else {
 			recipientSocket.emit('addToChat','From ' + player.username + ':' + data.message);
 			socket.emit('addToChat','To ' + data.username + ':' + data.message);
+		}
+	});
+	
+	socket.on('addOrders',function(data){
+		for(var i in data.objects){
+			Object.list[data.objects[i]].addOrder(data.order);
 		}
 	});
 	
@@ -253,6 +324,10 @@ setInterval(function(){
 	removePack.object = [];
 	
 },1000/25);
+
+
+
+
 
 
 
