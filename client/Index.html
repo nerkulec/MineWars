@@ -18,7 +18,7 @@
 	</div>
 	
 	<div id="belowGame" style="margin-top:910px">	
-		<div id="chat-text" style="width:1900px;height:100px;overflow-y:scroll">
+		<div id="chat-text" style="width:1900px;height:90px;overflow-y:scroll">
 			<div>Hello!</div>
 		</div>
 
@@ -80,10 +80,8 @@
 	
 	//game
 	var Img = {};
-	Img.player = new Image();
-	Img.player.src = '/client/img/stonuk.jpg';
-	Img.bullet = new Image();
-	Img.bullet.src = '/client/img/bullet.png';
+	Img.camera = new Image();
+	Img.camera.src = '/client/img/stonuk.jpg';
 	
 	Img.bg = new Image();
 	Img.bg.src = '/client/img/bg.jpg';
@@ -92,75 +90,45 @@
 	var ctxUi = document.getElementById("ctx-ui").getContext("2d");
 	ctxUi.font = '30px Arial';
 	
-	var Player = function(initPack){
+	var Camera = function(pack){
 		var self = {};
-		self.id = initPack.id;
-
-		self.x = initPack.x;
-		self.y = initPack.y;
-		self.hp = initPack.hp;
-		self.hpMax = initPack.hpMax;
-		self.score = initPack.score;
-		
+		self.x = pack.x;
+		self.y = pack.y;
 		self.draw = function(){	
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
-			
-			var hpWidth = 30 * self.hp / self.hpMax;
-			ctx.fillStyle = 'red';
-			ctx.fillRect(x - hpWidth/2,y - 40,hpWidth,4);
-			
-			var width = Img.player.width*2/20;
-			var height = Img.player.height*2/20;
-			
-			
-			ctx.drawImage(Img.player,
-				0.2*Img.player.width,0.2*Img.player.height,0.5*Img.player.width,0.6*Img.player.height,
-				x-width/2,y-height/2,width,height);
-			
-		}
-		
-		Player.list[self.id] = self;
-		
-		
-		return self;
-	}
-	Player.list = {};
+			var x = self.x - camera.x + WIDTH/2;
+			var y = self.y - camera.y + HEIGHT/2;
 
-		
-	var Bullet = function(initPack){
-		var self = {};
-		self.id = initPack.id;
-		self.x = initPack.x;
-		self.y = initPack.y;
-		
-		self.draw = function(){
-			var width = Img.bullet.width/2;
-			var height = Img.bullet.height/2;
+			var width = Img.camera.width*2/20;
+			var height = Img.camera.height*2/20;
 			
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
 			
-			ctx.drawImage(Img.bullet,
-				0,0,Img.bullet.width,Img.bullet.height,
+			ctx.drawImage(Img.camera,
+				0.2*Img.camera.width,0.2*Img.camera.height,0.5*Img.camera.width,0.6*Img.camera.height,
 				x-width/2,y-height/2,width,height);
+			
 		}
 		
-		Bullet.list[self.id] = self;		
 		return self;
 	}
-	Bullet.list = {};
+	
+	var camera = Camera({x:0,y:0});
 	
 	var Object= function(initPack){
 		var self = {};
 		self.id = initPack.id;
 		self.x = initPack.x;
 		self.y = initPack.y;
+		self.selected = false;
 		
 		self.draw = function(){
-			var x = self.x - Player.list[selfId].x + WIDTH/2;
-			var y = self.y - Player.list[selfId].y + HEIGHT/2;
+			var x = self.x - camera.x + WIDTH/2;
+			var y = self.y - camera.y + HEIGHT/2;
 		
+			if(self.selected){
+				ctx.fillStyle="#0000FF";
+				ctx.fillRect(x-12,y-12,24,24);
+				}
+			ctx.fillStyle="#FF0000";
 			ctx.fillRect(x-10,y-10,20,20);
 		}
 		
@@ -168,48 +136,14 @@
 		return self;
 	}
 	Object.list = {};
-	
-	var selfId = null;
 
 	socket.on('init',function(data){	
-		if(data.selfId)
-			selfId = data.selfId;
-		for(var i = 0 ; i < data.player.length; i++){
-			new Player(data.player[i]);
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			new Bullet(data.bullet[i]);
-		}
 		for(var i = 0 ; i < data.object.length; i++){
 			new Object(data.object[i]);
 		}
 	});
 	
 	socket.on('update',function(data){
-		for(var i = 0 ; i < data.player.length; i++){
-			var pack = data.player[i];
-			var p = Player.list[pack.id];
-			if(p){
-				if(pack.x !== undefined)
-					p.x = pack.x;
-				if(pack.y !== undefined)
-					p.y = pack.y;
-				if(pack.hp !== undefined)
-					p.hp = pack.hp;
-				if(pack.score !== undefined)
-					p.score = pack.score;
-			}
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			var pack = data.bullet[i];
-			var b = Bullet.list[data.bullet[i].id];
-			if(b){
-				if(pack.x !== undefined)
-					b.x = pack.x;
-				if(pack.y !== undefined)
-					b.y = pack.y;
-			}
-		}
 		for(var i = 0 ; i < data.object.length; i++){
 			var pack = data.object[i];
 			var b = Object.list[data.object[i].id];
@@ -223,48 +157,23 @@
 	});
 	
 	socket.on('remove',function(data){
-		//{player:[12323],bullet:[12323,123123]}
-		for(var i = 0 ; i < data.player.length; i++){
-			delete Player.list[data.player[i]];
-		}
-		for(var i = 0 ; i < data.bullet.length; i++){
-			delete Bullet.list[data.bullet[i]];
-		}
 		for(var i = 0 ; i < data.object.length; i++){
 			delete Object.list[data.object[i]];
 		}
 	});
 	
 	setInterval(function(){
-		if(!selfId)
-			return;
 		ctx.clearRect(0,0,WIDTH,HEIGHT);
 		drawBg();
-		drawScore();
-		for(var i in Player.list)
-			Player.list[i].draw();
-		for(var i in Bullet.list)
-			Bullet.list[i].draw();
 		for(var i in Object.list)
 			Object.list[i].draw();
 	},40);
 	
 	var drawBg = function(){
-		var player = Player.list[selfId];
-		var x = WIDTH/2 - player.x;
-		var y = HEIGHT/2 - player.y;
-		ctx.drawImage(Img.bg,0,0,1130,1130,x,y,WIDTH*3,HEIGHT*3);
+		var x = WIDTH/2 - camera.x;
+		var y = HEIGHT/2 - camera.y;
+		ctx.drawImage(Img.bg,0,0,1130,1130,x,y,WIDTH,HEIGHT);
 	}
-	
-	var drawScore = function(){
-		if(lastScore === Player.list[selfId].score)
-			return;
-		lastScore = Player.list[selfId].score;
-		ctxUi.clearRect(0,0,WIDTH,HEIGHT);
-		ctxUi.fillStyle = 'white';
-		ctxUi.fillText(Player.list[selfId].score,0,30);
-	}
-	var lastScore = null;
 	
 	document.onkeydown = function(event){
 		if(event.keyCode === 68)	//d
@@ -288,19 +197,40 @@
 			socket.emit('keyPress',{inputId:'up',state:false});
 	}
 	
+	var selectX = null;
+	var selectY = null;
+	
 	document.onmousedown = function(event){
-		socket.emit('keyPress',{inputId:'attack',state:true});
+		if(event.button===0){
+			selectX =event.clientX;
+			selectY =event.clientY;
+		}
 	}
 	document.onmouseup = function(event){
-		socket.emit('keyPress',{inputId:'attack',state:false});
+		if(event.button===0){
+			var selectX2 =event.clientX;
+			var selectY2 =event.clientY;
+			
+			for(var i in Object.list){
+				Object.list[i].selected = false;
+			
+			}
+			
+			ctx.fillRect(selectX,selectY,selectX2-selectX,selectY2-selectY);
+			
+			for(var i in Object.list){
+			obj = Object.list[i];
+			x = obj.x + WIDTH/2 - camera.x ;
+			y = obj.y + HEIGHT/2 - camera.y ;
+				if((x > selectX&&x < selectX2)&&(y > selectY&&y < selectY2)){
+					obj.selected = true;
+					console.log(obj);
+				}
+			}
+		}
+			
 	}
-	document.onmousemove = function(event){
-		var x = -WIDTH/2 + event.clientX - 8;
-		var y = -HEIGHT/2 + event.clientY - 8;
-		var angle = Math.atan2(y,x) / Math.PI * 180;
-		socket.emit('keyPress',{inputId:'mouseAngle',state:angle});
-	}
-	
+
 	document.oncontextmenu = function(event){
 		event.preventDefault();
 	}
