@@ -94,6 +94,7 @@
 		var self = {};
 		self.x = pack.x;
 		self.y = pack.y;
+		self.speed = 10;
 		self.draw = function(){	
 			var x = self.x - camera.x + WIDTH/2;
 			var y = self.y - camera.y + HEIGHT/2;
@@ -176,14 +177,14 @@
 	}
 	
 	document.onkeydown = function(event){
-		if(event.keyCode === 68)	//d
-			socket.emit('keyPress',{inputId:'right',state:true});
-		else if(event.keyCode === 83)	//s
-			socket.emit('keyPress',{inputId:'down',state:true});
-		else if(event.keyCode === 65) //a
-			socket.emit('keyPress',{inputId:'left',state:true});
-		else if(event.keyCode === 87) // w
-			socket.emit('keyPress',{inputId:'up',state:true});
+		if(event.keyCode === 68)	//up
+			camera.x+=camera.speed;
+		else if(event.keyCode === 83)	//down
+			camera.x-=camera.speed;
+		else if(event.keyCode === 65) //right
+			camera.x+=camera.speed;
+		else if(event.keyCode === 87) //left
+			camera.x-=camera.speed;
 			
 	}
 	document.onkeyup = function(event){
