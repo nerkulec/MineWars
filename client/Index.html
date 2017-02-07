@@ -7,23 +7,23 @@
 </div>
 -->
 <div id="gameDiv" style="display:inline-block" >
-	<div id="game" style="position:absolute;width:1900px;height:900px">
-		<canvas id="ctx" width="1900" height="900" style="position:absolute;border:1px solid #000000;"></canvas>
-		<canvas id="ctx-ui" width="1900" height="900" style="position:absolute;border:1px solid #000000;"></canvas>
+	<div id="game" style="position:absolute;width:1800px;height:800px">
+		<canvas id="ctx" width="1800" height="800" style="position:absolute;border:1px solid #000000;"></canvas>
+		<canvas id="ctx-ui" width="1800" height="800" style="position:absolute;border:1px solid #000000;"></canvas>
 		
-		<div id="ui" style="position:absolute;width:1440px;height:900px;">
+		<div id="ui" style="position:absolute;width:1800px;height:800px;">
 		
 		</div>
 		
 	</div>
 	
-	<div id="belowGame" style="margin-top:910px">	
-		<div id="chat-text" style="width:1900px;height:90px;overflow-y:scroll">
+	<div id="belowGame" style="margin-top:810px">	
+		<div id="chat-text" style="width:1800px;height:100px;overflow-y:scroll">
 			<div>Hello!</div>
 		</div>
 
 		<form id="chat-form">
-			<input id="chat-input" type="text" style="width:1900px"></input>
+			<input id="chat-input" type="text" style="width:1800px"></input>
 		</form>
 	</div>
 </div>
@@ -32,8 +32,8 @@
 <script src="/client/socket.js"></script>
 <script>
 	// 
-	var WIDTH = 1900;
-	var HEIGHT = 900;
+	var WIDTH = 1800;
+	var HEIGHT = 800;
 	var socket = io();
 	
 	//sign
