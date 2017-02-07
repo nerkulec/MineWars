@@ -221,7 +221,7 @@ Player.onConnect = function(socket,username){
 
 Player.onDisconnect = function(socket){
 	for(var i in SOCKET_LIST){
-			SOCKET_LIST[i].emit('addToChat','Player '+Player.list[socket.id].username+' disconnected.');
+			SOCKET_LIST[i].emit('addToChat','Player '+Player.list[socket.id].username+' disconnected. ');
 		}
 	delete Player.list[socket.id];
 }
