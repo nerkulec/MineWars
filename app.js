@@ -50,7 +50,7 @@ var Entity = function(param){
 	self.addOrder = function(pack){ //TODO: ma dodawać order do kolejki orderow
 		console.log('Order added');
 		self.orderList[self.lastOrderNum] = pack;
-		self.lastOrderNum++;
+		self.lastOrderNum++; 
 		//inne rzeczy ktore zrobi order
 	}
 	self.updateOrder = function(){
