@@ -26,7 +26,10 @@ var Entity = function(param){
 		spdX:0,
 		spdY:0,
 		id:Math.random(),
-		currentOrder:null
+		orderList:{},
+		currentOrder:null,
+		orderNum:0,
+		lastOrderNum:0
 	}
 	self.xDone = false;
 	self.yDone = false;
@@ -40,12 +43,23 @@ var Entity = function(param){
 	}
 	
 	self.update = function(){
+		self.updateOrder();
 		self.updateSpeed();
 		self.updatePosition();
 	}
 	self.addOrder = function(pack){ //TODO: ma dodawać order do kolejki orderow
-		self.currentOrder = pack;
+		console.log('Order added');
+		self.orderList[self.lastOrderNum] = pack;
+		self.lastOrderNum++;
 		//inne rzeczy ktore zrobi order
+	}
+	self.updateOrder = function(){
+		if(!self.currentOrder&&self.orderList[self.orderNum]){
+			self.currentOrder = self.orderList[self.orderNum];
+			self.orderNum++;
+			console.log('Order updated');
+		}
+			
 	}
 	self.updateSpeed = function(){ //pack = {x:,y:,maxSpd:}
 		//kod ktory uruchomii sie nawet bez paczki
@@ -182,8 +196,11 @@ Player.onConnect = function(socket,username){
 		id:socket.id,
 	});
 	var object = {};
-	for(var i = 0;i<10;i++)
-		object[i] = Object({x:i*50,y:i*25});
+	for(var i = 0;i<10;i++){
+		for(var j = 0;j<10;j++){
+		object[i] = Object({x:i*50,y:j*50});
+		}
+	}
 
 	socket.on('sendMsgToServer',function(data){
 		for(var i in SOCKET_LIST){

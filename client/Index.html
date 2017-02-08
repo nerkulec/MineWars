@@ -6,24 +6,36 @@
 	<button id="signDiv-signUp">Sign Up</button>
 </div>
 -->
+<style>
+    html, body {
+      width: 90%;
+      height: 85%;
+      margin: 4%;
+	  margin-bottom: 0px;
+      border: 0;
+      overflow: hidden;
+      display: block;
+    }
+</style>
+
 <div id="gameDiv" style="display:inline-block" >
-	<div id="game" style="position:absolute;width:1800px;height:800px">
-		<canvas id="ctx" width="1800" height="800" style="position:absolute;border:1px solid #000000;"></canvas>
-		<canvas id="ctx-ui" width="1800" height="800" style="position:absolute;border:1px solid #000000;"></canvas>
+	<div id="game" style="position:absolute; left:0px; top:0px;">
+		<canvas id="ctx" style="position:absolute;border:1px solid #000000;"></canvas>
+		<canvas id="ctx-ui"  style="position:absolute;border:1px solid #000000;"></canvas>
 		
-		<div id="ui" style="position:absolute;width:1800px;height:800px;">
+		<div id="ui" style="position:absolute;">
 		
 		</div>
 		
 	</div>
-	
-	<div id="belowGame" style="margin-top:800px">	
-		<div id="chat-text" style="width:1800px;height:90px;overflow-y:scroll">
+
+	<div id="belowGame" style="margin-top:350%">	
+		<div id="chat-text" style="overflow-y:scroll">
 			<div>Hello!</div>
 		</div>
 
 		<form id="chat-form">
-			<input id="chat-input" type="text" style="width:1800px"></input>
+			<input id="chat-input" type="text" ></input>
 		</form>
 	</div>
 </div>
@@ -32,9 +44,22 @@
 <script src="/client/socket.js"></script>
 <script>
 	// 
-	var WIDTH = 1800;
-	var HEIGHT = 800;
+	var WIDTH = window.innerWidth-2;
+	var HEIGHT = window.innerHeight-2;
 	var socket = io();
+	
+	ctxCanvas = document.getElementById('ctx');
+	ctxUiCanvas = document.getElementById('ctx-ui');
+	//ctxUiCanvas = document.getElementById('ctx-ui');
+	//ctxUiCanvas = document.getElementById('ctx-ui');
+	window.addEventListener('resize', resizeCanvas, false);
+	resizeCanvas();
+	function resizeCanvas() {
+            ctxCanvas.width = WIDTH;
+            ctxUiCanvas.width = WIDTH;
+            ctxCanvas.height = HEIGHT;
+            ctxUiCanvas.height = HEIGHT;
+        }
 	
 	//sign
 	var signDiv = document.getElementById('signDiv');
@@ -216,8 +241,8 @@
 			
 		}else if(event.button===2){
 		var order = {
-			x:event.clientX-WIDTH/2+camera.x-8,
-			y:event.clientY-HEIGHT/2+camera.y-8,
+			x:event.clientX-WIDTH/2+camera.x,
+			y:event.clientY-HEIGHT/2+camera.y,
 		};
 		var pack = {
 			objects:[],
@@ -246,9 +271,10 @@
 			
 			for(var i in Object.list){
 			obj = Object.list[i];
-			x = obj.x + WIDTH/2 - camera.x ;
-			y = obj.y + HEIGHT/2 - camera.y ;
-				if((x > selectX&&x < selectX2)&&(y > selectY&&y < selectY2)){
+			x = obj.x + WIDTH/2 - camera.x;
+			y = obj.y + HEIGHT/2 - camera.y;
+
+				if(Math.min(selectX,selectX2)<=x&&x<=Math.max(selectX,selectX2)&&Math.min(selectY,selectY2)<=y&&y<=Math.max(selectY,selectY2)){
 					obj.selected = true;
 					console.log(obj);
 				}
